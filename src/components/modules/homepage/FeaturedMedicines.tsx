@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { medicineService } from "@/services/medicine.service";
-import { MedicineType } from "@/types/medicine,type";
+import { MedicineType } from "@/types/medicine.type";
 
-export default async function FeaturedMedicines({ limit = 3 }: { limit?: number }) {
+export default async function FeaturedMedicines({ limit = 4 }: { limit?: number }) {
     const { data } = await medicineService.getAllMedicine({ limit: String(limit), page: "1" }, { revalidate: 60 });
     const medicines: MedicineType[] = data?.data?.data;
     console.log(medicines);
@@ -20,7 +20,7 @@ export default async function FeaturedMedicines({ limit = 3 }: { limit?: number 
                     <Link href="/shop" className="text-sm text-blue-600">All Products →</Link>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {medicines.map((m) => (
                         <article key={m.id} className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm">
                             <Link href={`/shop/${m.id}`} className="block">

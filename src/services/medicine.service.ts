@@ -42,4 +42,27 @@ export const medicineService = {
             return { data: null, error: "Something Went Wrong !" }
         }
     },
+
+    getMedicineById: async function (id: string, option?: ServiceOption) {
+        try {
+            const url = `${API_URL}/medicines/${encodeURIComponent(id)}`;
+            const config: RequestInit = {};
+            if (option?.cache) config.cache = option.cache;
+            if (option?.revalidate) config.next = { revalidate: option.revalidate };
+
+            config.next = { ...config.next, tags: ["medicines"] };
+
+            const res = await fetch(url, config);
+            if (!res.ok) {
+                // forward status for caller to handle
+                return { data: null, error: `Request failed with status ${res.status}`, status: res.status };
+            }
+            const json = await res.json();
+            return { data: json, error: null, status: res.status };
+        } catch (err) {
+            console.error("getMedicineById error:", err);
+            return { data: null, error: "Something went wrong", status: 500 };
+        }
+
+    }
 }

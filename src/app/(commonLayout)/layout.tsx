@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 const CommonLayout = ({ children }: { children: ReactNode }) => {
     return (
-        <div className="w-11/12 md:max-w-3xl lg:max-w-6xl mx-auto">
+        <div className="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8">
             <Navbar1 />
             {children}
         </div>

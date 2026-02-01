@@ -1,11 +1,11 @@
-import { Footer2 } from "@/components/layout/footer2";
-import HeroBanner from "@/components/layout/Banner";
-import BenefitsStrip from "@/components/layout/BenefitsStrip";
+import { Footer2 } from "@/components/modules/homepage/footer2";
+import HeroBanner from "@/components/modules/homepage/Banner";
+import BenefitsStrip from "@/components/modules/homepage/BenefitsStrip";
 import WhyUs from "@/components/layout/WhyUs";
-import FeaturedMedicines from "@/components/layout/FeaturedMedicines";
+import FeaturedMedicines from "@/components/modules/homepage/FeaturedMedicines";
 
 
-export default function Home() {
+export default function HomePage() {
 
     return (
         <div className="items-center justify-center">
