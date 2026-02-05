@@ -24,7 +24,7 @@ export const medicineService = {
                     }
                 })
             }
-            console.log(url);
+            // console.log(url);
 
             const config: RequestInit = {};
             if (option?.cache) {

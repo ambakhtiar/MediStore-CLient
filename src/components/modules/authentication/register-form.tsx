@@ -69,7 +69,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
                 }
 
                 toast.success("User created successfully", { id: toastId });
-                router.push("/");
+                router.push("/login");
                 router.refresh();
             } catch (err) {
                 console.error(err);

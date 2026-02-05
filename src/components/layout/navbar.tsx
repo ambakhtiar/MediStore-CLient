@@ -27,6 +27,9 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 import { ModeToggle } from "./Modeoggle";
+import { SessionWithUser } from "@/types";
+import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 
 interface MenuItem {
     title: string;
@@ -56,9 +59,11 @@ interface Navbar1Props {
             url: string;
         };
     };
+    session?: { data?: SessionWithUser | null; error: unknown } | null;
 }
 
-const Navbar1 = ({
+
+const Navbar = ({
     logo = {
         url: "/",
         src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
@@ -111,7 +116,23 @@ const Navbar1 = ({
         signup: { title: "Sign up", url: "/register" },
     },
     className,
+    session = null,
 }: Navbar1Props) => {
+    const handleLogOut = async () => {
+        const toastId = toast.loading("Signing out...");
+        try {
+            // Sign the user out
+            await authClient.signOut();
+
+            // Redirect to home page after logout
+            window.location.href = "/";
+
+            toast.success("Succesfully Logout", { id: toastId });
+        } catch (err) {
+            console.error("Logout failed:", err);
+        }
+    };
+
     return (
         <section className={cn("py-4", className)}>
             <div className="container">
@@ -139,12 +160,22 @@ const Navbar1 = ({
                     </div>
                     <div className="flex gap-2">
                         <ModeToggle />
-                        <Button asChild variant="outline" size="sm">
-                            <a href={auth.login.url}>{auth.login.title}</a>
-                        </Button>
-                        <Button asChild size="sm">
-                            <a href={auth.signup.url}>{auth.signup.title}</a>
-                        </Button>
+                        {
+                            session && session?.data
+                                ? <div>
+                                    <Button onClick={handleLogOut} variant="outline"
+                                    >Logout</Button>
+
+                                </div>
+                                : <div>
+                                    <Button asChild variant="outline">
+                                        <a href={auth.login.url}>{auth.login.title}</a>
+                                    </Button>
+                                    <Button asChild>
+                                        <a href={auth.signup.url}>{auth.signup.title}</a>
+                                    </Button>
+                                </div>
+                        }
                     </div>
                 </nav>
 
@@ -188,12 +219,22 @@ const Navbar1 = ({
 
                                     <div className="flex flex-col gap-3">
                                         <ModeToggle />
-                                        <Button asChild variant="outline">
-                                            <a href={auth.login.url}>{auth.login.title}</a>
-                                        </Button>
-                                        <Button asChild>
-                                            <a href={auth.signup.url}>{auth.signup.title}</a>
-                                        </Button>
+                                        {
+                                            session && session?.data
+                                                ? <div>
+                                                    <Button onClick={handleLogOut} variant="outline"
+                                                    >Logout</Button>
+
+                                                </div>
+                                                : <div>
+                                                    <Button asChild variant="outline">
+                                                        <a href={auth.login.url}>{auth.login.title}</a>
+                                                    </Button>
+                                                    <Button asChild>
+                                                        <a href={auth.signup.url}>{auth.signup.title}</a>
+                                                    </Button>
+                                                </div>
+                                        }
                                     </div>
                                 </div>
                             </SheetContent>
@@ -275,4 +316,4 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
     );
 };
 
-export { Navbar1 };
+export { Navbar };

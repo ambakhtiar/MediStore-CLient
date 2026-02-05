@@ -6,7 +6,7 @@ import { MedicineType } from "@/types/medicine.type";
 export default async function FeaturedMedicines({ limit = 4 }: { limit?: number }) {
     const { data } = await medicineService.getAllMedicine({ limit: String(limit), isFeatured: true, page: "1" }, { revalidate: 60 });
     const medicines: MedicineType[] = data?.data?.data;
-    console.log(medicines);
+    // console.log(medicines);
 
     if (!medicines.length) {
         return <div className="py-8 text-center text-sm text-gray-500">No featured medicines right now.</div>;
