@@ -5,7 +5,7 @@ import type { MedicineType } from "@/types/medicine.type";
 export default async function ShopPage() {
     const { data } = await medicineService.getAllMedicine();
     const items: MedicineType[] = data?.data?.data ?? [];
-    console.log(items);
+    // console.log(items);
 
     return (
         <section className="py-8">

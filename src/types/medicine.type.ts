@@ -6,6 +6,7 @@ export type MedicineType = {
     price?: number | null;
     stock?: number | null;
     manufacturer?: string | null;
+    isFeatured?: boolean | null;
     imageUrl?: string | null;
     isActive?: boolean;
     createdAt?: string;

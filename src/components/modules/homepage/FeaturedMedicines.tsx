@@ -4,7 +4,7 @@ import { medicineService } from "@/services/medicine.service";
 import { MedicineType } from "@/types/medicine.type";
 
 export default async function FeaturedMedicines({ limit = 4 }: { limit?: number }) {
-    const { data } = await medicineService.getAllMedicine({ limit: String(limit), page: "1" }, { revalidate: 60 });
+    const { data } = await medicineService.getAllMedicine({ limit: String(limit), isFeatured: true, page: "1" }, { revalidate: 60 });
     const medicines: MedicineType[] = data?.data?.data;
     console.log(medicines);
 

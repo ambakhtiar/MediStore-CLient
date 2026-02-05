@@ -1,7 +1,7 @@
 import { Footer2 } from "@/components/modules/homepage/footer2";
 import HeroBanner from "@/components/modules/homepage/Banner";
 import BenefitsStrip from "@/components/modules/homepage/BenefitsStrip";
-import WhyUs from "@/components/layout/WhyUs";
+import WhyUs from "@/components/modules/homepage/WhyUs";
 import FeaturedMedicines from "@/components/modules/homepage/FeaturedMedicines";
 
 

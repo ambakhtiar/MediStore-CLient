@@ -8,6 +8,7 @@ interface ServiceOption {
 }
 interface getMEdicineParams {
     search?: string,
+    isFeatured?: boolean,
     page?: string,
     limit?: string
 }
@@ -23,6 +24,7 @@ export const medicineService = {
                     }
                 })
             }
+            console.log(url);
 
             const config: RequestInit = {};
             if (option?.cache) {
