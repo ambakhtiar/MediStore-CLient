@@ -21,15 +21,21 @@ export async function proxy(request: NextRequest) {
     }
 
     //* User is authenticated and role = ADMIN
-    //* User can not visit user dashboard
+    //* User can visit admin dashboard
     if (role === Roles.admin && pathname.startsWith("/admin")) {
         return NextResponse.redirect(new URL("/admin", request.url));
     }
 
-    //* User is authenticated and role = USER
+    //* User is authenticated and role = seller
     //* User can not visit admin-dashboard
     if (role === Roles.seller && pathname.startsWith("/seller")) {
-        return NextResponse.redirect(new URL("//seller/dashboard", request.url));
+        return NextResponse.redirect(new URL("/seller/dashboard", request.url));
+    }
+
+    //* User is authenticated and role = customer
+    //* User can not visit seller or admin dashboard
+    if (role === Roles.customer) {
+        return NextResponse.redirect(new URL("/", request.url));
     }
 
     return NextResponse.next();

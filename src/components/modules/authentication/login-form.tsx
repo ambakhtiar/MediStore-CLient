@@ -69,11 +69,12 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
                     return;
                 }
 
-                console.log(data);
-                console.log(window.location.pathname);
+                // console.log(data);
+                // console.log(window.location.pathname);
                 toast.success("User Logged in Successfully", { id: toastId });
 
                 router.push(callbackUrl);
+                router.refresh();
             } catch (err: unknown) {
                 console.error("Network/exception during sign-in:", err);
 

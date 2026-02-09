@@ -1,9 +1,7 @@
 "use client";
 
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
-
+import { Menu, } from "lucide-react";
 import { cn } from "@/lib/utils";
-
 import {
     Accordion,
     AccordionContent,
@@ -32,6 +30,10 @@ import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { adminNavbarRoutes, customerNavbarRoutes, sellerNavbarRoutes } from "@/routes/navbar.routes";
 import { Roles } from "@/constants/roles";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
 
 interface MenuItem {
     title: string;
@@ -71,7 +73,6 @@ export enum UserRole {
 }
 
 
-
 const Navbar = ({
     logo = {
         url: "/",
@@ -92,34 +93,41 @@ const Navbar = ({
     className,
     session = null,
 }: Navbar1Props) => {
+    const router = useRouter();
+    const [open, setOpen] = useState(false);
+
     const handleLogOut = async () => {
         const toastId = toast.loading("Signing out...");
         try {
             // Sign the user out
             await authClient.signOut();
+            toast.success("Succesfully Logout", { id: toastId });
 
-            // Redirect to home page after logout
+            // Force to go home
             window.location.href = "/";
 
-            toast.success("Succesfully Logout", { id: toastId });
         } catch (err) {
             console.error("Logout failed:", err);
         }
     };
 
-    if (session?.data?.user?.role === Roles.customer) {
-        customerNavbarRoutes.forEach(item => {
-            menu.push(item);
-        })
-    } else if (session?.data?.user?.role === Roles.customer) {
-        sellerNavbarRoutes.forEach(item => {
-            menu.push(item);
-        })
-    } else if (session?.data?.user?.role === Roles.admin) {
-        adminNavbarRoutes.forEach(item => {
-            menu.push(item);
-        })
-    }
+    const role = session?.data?.user?.role ?? null;
+    const roleRoutes =
+        role === Roles.admin ? adminNavbarRoutes
+            : role === Roles.seller ? sellerNavbarRoutes
+                : role === Roles.customer ? customerNavbarRoutes
+                    : [];
+
+    const mergedMenu = [...menu, ...roleRoutes];
+
+    // helper to build callbackUrl for sign -in links
+    const callbackUrl = () => {
+        try {
+            return encodeURIComponent(window.location.href);
+        } catch {
+            return encodeURIComponent("/");
+        }
+    };
 
 
     return (
@@ -142,14 +150,14 @@ const Navbar = ({
                         <div className="flex items-center">
                             <NavigationMenu>
                                 <NavigationMenuList>
-                                    {menu.map((item) => renderMenuItem(item))}
+                                    {mergedMenu.map((item) => renderMenuItem(item))}
                                 </NavigationMenuList>
                             </NavigationMenu>
                         </div>
                     </div>
                     <div className="flex gap-2">
                         <ModeToggle />
-                        {
+                        {/* {
                             session && session?.data
                                 ? <div>
                                     <Button onClick={handleLogOut} variant="outline"
@@ -164,7 +172,65 @@ const Navbar = ({
                                         <a href={auth.signup.url}>{auth.signup.title}</a>
                                     </Button>
                                 </div>
-                        }
+                        } */}
+
+                        {/* If not signed in: show login/signup */}
+                        {!session?.data?.user ? (
+                            <div className="flex gap-2">
+                                <Button asChild variant="outline">
+                                    <a href={`${auth.login.url}?callbackUrl=${callbackUrl()}`}>{auth.login.title}</a>
+                                </Button>
+                                <Button asChild>
+                                    <a href={auth.signup.url}>{auth.signup.title}</a>
+                                </Button>
+                            </div>
+                        ) : (
+                            // Signed in: avatar + cart
+                            <div className="flex items-center gap-4">
+                                {/* Cart icon with badge (replace count with real value) */}
+                                <Link href="/cart" className="relative inline-flex items-center">
+                                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                                        <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 6h14l-2-6M10 21a1 1 0 100-2 1 1 0 000 2zm6 0a1 1 0 100-2 1 1 0 000 2z" />
+                                    </svg>
+                                    <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-full">
+                                        {/* TODO: replace 0 with dynamic cart count */}
+                                        0
+                                    </span>
+                                </Link>
+
+                                {/* Profile avatar + dropdown */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setOpen((s) => !s)}
+                                        className="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-gray-100"
+                                        aria-expanded={open}
+                                    >
+                                        <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                            {session.data?.user?.image ? (
+                                                <Image src={session.data.user.image} alt={session.data.user.name ?? "User"} width={36} height={36} className="object-cover" />
+                                            ) : (
+                                                <span className="text-sm font-medium text-gray-600">
+                                                    {(session.data?.user?.name ?? "U").slice(0, 1).toUpperCase()}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="hidden sm:flex flex-col text-left">
+                                            <span className="text-sm font-medium text-gray-800">{session.data?.user?.name ?? "User"}</span>
+                                            <span className="text-xs text-gray-500">Profile</span>
+                                        </div>
+                                    </button>
+
+                                    {open && (
+                                        <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-20">
+                                            <div className="py-2">
+                                                <Link href="/profile" className="block px-3 py-2 text-sm hover:bg-gray-50">Profile</Link>
+                                                <button onClick={handleLogOut} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-50">Sign out</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </nav>
 
@@ -203,12 +269,12 @@ const Navbar = ({
                                         collapsible
                                         className="flex w-full flex-col gap-4"
                                     >
-                                        {menu.map((item) => renderMobileMenuItem(item))}
+                                        {mergedMenu.map((item) => renderMobileMenuItem(item))}
                                     </Accordion>
 
                                     <div className="flex flex-col gap-3">
                                         <ModeToggle />
-                                        {
+                                        {/* {
                                             session && session?.data
                                                 ? <div>
                                                     <Button onClick={handleLogOut} variant="outline"
@@ -223,7 +289,65 @@ const Navbar = ({
                                                         <a href={auth.signup.url}>{auth.signup.title}</a>
                                                     </Button>
                                                 </div>
-                                        }
+                                        } */}
+
+                                        {/* If not signed in: show login/signup */}
+                                        {!session?.data?.user ? (
+                                            <div className="flex gap-2">
+                                                <Button asChild variant="outline">
+                                                    <a href={`${auth.login.url}?callbackUrl=${callbackUrl()}`}>{auth.login.title}</a>
+                                                </Button>
+                                                <Button asChild>
+                                                    <a href={auth.signup.url}>{auth.signup.title}</a>
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            // Signed in: avatar + cart
+                                            <div className="flex items-center gap-4">
+                                                {/* Cart icon with badge (replace count with real value) */}
+                                                <Link href="/cart" className="relative inline-flex items-center">
+                                                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                                                        <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 6h14l-2-6M10 21a1 1 0 100-2 1 1 0 000 2zm6 0a1 1 0 100-2 1 1 0 000 2z" />
+                                                    </svg>
+                                                    <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-full">
+                                                        {/* TODO: replace 0 with dynamic cart count */}
+                                                        0
+                                                    </span>
+                                                </Link>
+
+                                                {/* Profile avatar + dropdown */}
+                                                <div className="relative">
+                                                    <button
+                                                        onClick={() => setOpen((s) => !s)}
+                                                        className="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-gray-100"
+                                                        aria-expanded={open}
+                                                    >
+                                                        <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                                            {session.data?.user?.image ? (
+                                                                <Image src={session.data.user.image} alt={session.data.user.name ?? "User"} width={36} height={36} className="object-cover" />
+                                                            ) : (
+                                                                <span className="text-sm font-medium text-gray-600">
+                                                                    {(session.data?.user?.name ?? "U").slice(0, 1).toUpperCase()}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <div className="hidden sm:flex flex-col text-left">
+                                                            <span className="text-sm font-medium text-gray-800">{session.data?.user?.name ?? "User"}</span>
+                                                            <span className="text-xs text-gray-500">Profile</span>
+                                                        </div>
+                                                    </button>
+
+                                                    {open && (
+                                                        <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-20">
+                                                            <div className="py-2">
+                                                                <Link href="/profile" className="block px-3 py-2 text-sm hover:bg-gray-50">Profile</Link>
+                                                                <button onClick={handleLogOut} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-50">Sign out</button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </SheetContent>

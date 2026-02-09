@@ -57,7 +57,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
 
                 console.log("register payload:", payload);
                 const { data, error } = await authClient.signUp.email(payload);
-                console.log(data);
+                // console.log(data);
 
                 if (error) {
                     // backend validation errors often come back with details
@@ -69,7 +69,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
                 }
 
                 toast.success("User created successfully", { id: toastId });
-                router.push("/login");
+                router.push("/");
                 router.refresh();
             } catch (err) {
                 console.error(err);
