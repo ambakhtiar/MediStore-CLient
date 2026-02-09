@@ -30,6 +30,8 @@ import { ModeToggle } from "./Modeoggle";
 import { SessionWithUser } from "@/types";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { adminNavbarRoutes, customerNavbarRoutes, sellerNavbarRoutes } from "@/routes/navbar.routes";
+import { Roles } from "@/constants/roles";
 
 interface MenuItem {
     title: string;
@@ -62,6 +64,13 @@ interface Navbar1Props {
     session?: { data?: SessionWithUser | null; error: unknown } | null;
 }
 
+export enum UserRole {
+    CUSTOMER = "CUSTOMER",
+    SELLER = "SELLER",
+    ADMIN = "ADMIN",
+}
+
+
 
 const Navbar = ({
     logo = {
@@ -71,44 +80,9 @@ const Navbar = ({
         title: "MediStore",
     },
     menu = [
-        { title: "Home", url: "/" },
         {
             title: "Shop",
             url: "/shop"
-        },
-        {
-            title: "Resources",
-            url: "#",
-            items: [
-                {
-                    title: "Help Center",
-                    description: "Get all the answers you need right here",
-                    icon: <Zap className="size-5 shrink-0" />,
-                    url: "#",
-                },
-                {
-                    title: "Contact Us",
-                    description: "We are here to help you with any questions you have",
-                    icon: <Sunset className="size-5 shrink-0" />,
-                    url: "#",
-                },
-                {
-                    title: "Status",
-                    description: "Check the current status of our services and APIs",
-                    icon: <Trees className="size-5 shrink-0" />,
-                    url: "#",
-                },
-                {
-                    title: "Terms of Service",
-                    description: "Our terms and conditions for using our services",
-                    icon: <Book className="size-5 shrink-0" />,
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Dashboard",
-            url: "/dashboard",
         },
     ],
     auth = {
@@ -132,6 +106,21 @@ const Navbar = ({
             console.error("Logout failed:", err);
         }
     };
+
+    if (session?.data?.user?.role === Roles.customer) {
+        customerNavbarRoutes.forEach(item => {
+            menu.push(item);
+        })
+    } else if (session?.data?.user?.role === Roles.customer) {
+        sellerNavbarRoutes.forEach(item => {
+            menu.push(item);
+        })
+    } else if (session?.data?.user?.role === Roles.admin) {
+        adminNavbarRoutes.forEach(item => {
+            menu.push(item);
+        })
+    }
+
 
     return (
         <section className={cn("py-4", className)}>

@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import * as z from "zod";
 
@@ -27,10 +28,15 @@ const formSchema = z.object({
 });
 
 export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+
+
     const handleGoogleLogin = async () => {
         const data = authClient.signIn.social({
             provider: "google",
-            callbackURL: "http://localhost:3000",
+            callbackURL: callbackUrl,
         });
 
         console.log(data);
@@ -66,6 +72,8 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
                 console.log(data);
                 console.log(window.location.pathname);
                 toast.success("User Logged in Successfully", { id: toastId });
+
+                router.push(callbackUrl);
             } catch (err: unknown) {
                 console.error("Network/exception during sign-in:", err);
 

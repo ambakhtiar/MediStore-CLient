@@ -16,3 +16,8 @@ export type MedicineType = {
     sellerId?: string | null;
     seller?: { id: string; name?: string } | null;
 };
+
+export interface ServiceOption {
+    cache?: RequestCache,
+    revalidate?: number
+}

@@ -1,17 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { medicineService } from "@/services/medicine.service";
 import type { MedicineType } from "@/types/medicine.type";
-import { Button } from "@/components/ui/button";
+import { getMedicineById } from "@/action/medicine.action";
+import AddToCartSection from "@/components/modules/homepage/addToCardSection";
 
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: { id: string } };
 
 export default async function MedicinePage({ params }: Props) {
     const { id } = await params;
-
-    const { data, status } = await medicineService.getMedicineById(id, { revalidate: 60 });
-
+    const { data, status } = await getMedicineById(id, { revalidate: 60 });
+    // console.log(data);
     const payload: MedicineType = data?.data ?? data ?? null;
     const medicine: MedicineType | null = payload ?? null;
 
@@ -19,11 +18,13 @@ export default async function MedicinePage({ params }: Props) {
         if (status === 404) return notFound();
         return (
             <main className="max-w-4xl mx-auto px-4 py-12">
-                <div className="text-center text-red-600">Failed to load medicine details. Please try again later.</div>
+                <div className="text-center text-red-600">
+                    Failed to load medicine details. Please try again later.
+                </div>
             </main>
         );
     }
-    console.log(medicine);
+
     return (
         <main className="max-w-5xl mx-auto px-4 py-8">
             <nav className="text-sm text-gray-500 mb-4">
@@ -40,17 +41,16 @@ export default async function MedicinePage({ params }: Props) {
                             <Image
                                 src={encodeURI(medicine.imageUrl)}
                                 alt={medicine.name ?? "Medicine Image"}
-                                width={400}
-                                height={280}
+                                width={200}
+                                height={100}
                                 className="object-cover w-auto h-auto"
-                                sizes="(max-width:2xl) 100vw, 50vw"
-                                unoptimized={true}
+                                sizes="(max-width:xl) 100vw, 50vw"
                             />
                         ) : (
                             <div className="w-full h-36 flex items-center justify-center text-gray-400">No image</div>
                         )}
                     </div>
-                    {/* small meta */}
+
                     <div className="mt-4 text-sm text-gray-600">
                         <div><strong>Manufacturer:</strong> {medicine.manufacturer ?? "—"}</div>
                         <div><strong>Category:</strong> {medicine.category?.name ?? "—"}</div>
@@ -59,35 +59,37 @@ export default async function MedicinePage({ params }: Props) {
                 </div>
 
                 {/* Details column */}
-                <div>
+                <div className="flex flex-col gap-2">
                     <h1 className="text-2xl font-bold mb-2">{medicine.name}</h1>
-                    <p className="text-sm text-gray-600 mb-4">{medicine.genericName}</p>
+                    <p className="text-sm text-gray-600 mb-2">{medicine.genericName}</p>
 
-                    <div className="mb-4">
+                    <div className="mb-2">
                         <span className="text-2xl font-extrabold text-gray-900">${Number(medicine.price ?? 0).toFixed(2)}</span>
                         {medicine.price && medicine.price > 0 && (
                             <span className="ml-3 text-sm text-gray-500">incl. VAT (if applicable)</span>
                         )}
                     </div>
 
-                    <div className="prose max-w-none text-gray-700 dark:text-gray-300 mb-6">
+                    <div className="prose max-w-none text-gray-700 dark:text-gray-300 mb-3">
                         <p>{medicine.description ?? "No description available."}</p>
                     </div>
+
                     <div>
                         <p><span className="font-semibold">Seller Name: </span>{medicine.seller?.name}</p>
-                        {medicine.category?.id &&
-                            <Link href={`{/medicine/${medicine.category?.id}` || ""}>
+                        {medicine.category?.id && (
+                            <Link href={`/medicine/${medicine.genericName}`}>
                                 <p className="text-blue-700"><span className="font-semibold">Category: </span>{medicine.category?.name}</p>
-                            </Link>}
+                            </Link>
+                        )}
                     </div>
 
-                    {/* Client-side add to cart */}
-                    <div className="mb-6">
-                        <Button>{/* <AddToCart medicine={medicine} /> */}</Button>
+                    {/* Client-side add to cart section (client component) */}
+                    <div className="my-3">
+                        <AddToCartSection medicineId={medicine.id} maxStock={medicine.stock ?? undefined} />
                     </div>
 
                     <div className="text-xs text-gray-500">
-                        <div>Product ID: {medicine.id}</div>
+                        <div>Seller Name: {String(medicine.seller?.name).toUpperCase()}</div>
                         <div>Last updated: {medicine.updatedAt ? new Date(medicine.updatedAt).toLocaleString() : "—"}</div>
                     </div>
                 </div>

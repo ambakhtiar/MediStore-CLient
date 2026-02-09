@@ -34,3 +34,4 @@ export type ApiResponse<T = unknown> = {
     data?: T | null;
     error?: unknown;
 } | null;
+

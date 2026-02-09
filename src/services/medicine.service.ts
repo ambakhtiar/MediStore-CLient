@@ -1,12 +1,9 @@
 import { env } from "@/env";
+import { ServiceOption } from "@/types";
 
 const API_URL = env.API_URL;
 
-interface ServiceOption {
-    cache?: RequestCache,
-    revalidate?: number
-}
-interface getMEdicineParams {
+export interface getMEdicineParams {
     search?: string,
     isFeatured?: boolean,
     page?: string,
@@ -59,8 +56,9 @@ export const medicineService = {
                 // forward status for caller to handle
                 return { data: null, error: `Request failed with status ${res.status}`, status: res.status };
             }
-            const json = await res.json();
-            return { data: json, error: null, status: res.status };
+            const data = await res.json();
+            console.log(data);
+            return { data, error: null, status: res.status };
         } catch (err) {
             console.error("getMedicineById error:", err);
             return { data: null, error: "Something went wrong", status: 500 };
