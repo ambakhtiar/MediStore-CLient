@@ -28,7 +28,10 @@ export default async function CartPage() {
 
                                 <div className="flex-1">
                                     <div className="font-medium">{it?.medicine?.name}</div>
-                                    <div className="text-sm text-muted-foreground">Qty: {it.quantity}</div>
+                                    <div className="flex flex-col md:flex-row gap-2">
+                                        <div className="text-sm font-semibold text-muted-foreground">Stocks: {it?.medicine?.stock}</div>
+                                        <div className="text-sm text-shadow-muted-foreground">Qty: {it.quantity}</div>
+                                    </div>
                                 </div>
                                 <div className="text-right">
                                     <div className="font-medium">৳{((it.unitPrice ?? 0) * (it.quantity ?? 1)).toFixed(2)}</div>
