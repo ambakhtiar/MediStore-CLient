@@ -665,7 +665,7 @@ const Navbar = ({
                                             )}
                                         </div>
                                         <div className="hidden sm:flex flex-col text-left">
-                                            <span className="text-sm font-medium text-gray-800">{session.data?.user?.name ?? "User"}</span>
+                                            <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{session.data?.user?.name ?? "User"}</span>
                                             <span className="text-xs text-gray-500">Profile</span>
                                         </div>
                                     </button>
@@ -673,7 +673,7 @@ const Navbar = ({
                                     {open && (
                                         <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-20">
                                             <div className="py-2">
-                                                <Link href="/profile" className="block px-3 py-2 text-sm hover:bg-gray-50">Profile</Link>
+                                                <Link href="/profile" className="block px-3 py-2 text-sm hover:bg-gray-50 dark:text-black">Profile</Link>
                                                 <button onClick={handleLogOut} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-50">Sign out</button>
                                             </div>
                                         </div>
