@@ -15,7 +15,7 @@ export const createOrder = async (payload: CreateOrderPayload) => {
 
     if (result.ok) {
         // Cart will be cleared by backend, so revalidate cart
-        revalidateTag("CartAdd", "tag");
+        revalidateTag("CartAdd", "max");
 
         // Revalidate orders list page
         revalidatePath("/orders");
@@ -55,4 +55,14 @@ export const cancelOrder = async (orderId: string) => {
     }
 
     return result;
+};
+
+/* Returns:
+* [
+* { status: "PLACED", changedAt: "2026-02-20 10:30 AM" },
+* { status: "CONFIRMS", changedAt: "2026-02-21 2:15 PM" }
+* ]
+*/
+export const getOrderStatusHistory = async (orderId: string) => {
+    return await orderService.getOrderStatusHistory(orderId);
 };

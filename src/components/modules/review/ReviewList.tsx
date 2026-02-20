@@ -2,10 +2,10 @@
 
 /**
  * Review List Component
- * 
- * কি করে: একাধিক reviews একসাথে list আকারে দেখায়
- * কোথায় use করব: Medicine details page এ, My Reviews page এ
- * 
+ *
+ * What it does: Displays multiple reviews in a list
+ * Where to use: Medicine details page, My Reviews page
+ *
  * Features:
  * - Average rating display
  * - Total review count
@@ -22,8 +22,8 @@ interface ReviewListProps {
     reviews: Review[];
     averageRating?: number | null;
     reviewCount?: number;
-    showMedicine?: boolean;  // ReviewCard এ medicine info দেখাবে কিনা
-    title?: string;          // Custom title (default: "Reviews")
+    showMedicine?: boolean; // Whether to show medicine info in ReviewCard
+    title?: string; // Custom title (default: "Reviews")
 }
 
 export default function ReviewList({
@@ -31,15 +31,14 @@ export default function ReviewList({
     averageRating,
     reviewCount,
     showMedicine = false,
-    title = "রিভিউ"
+    title = "Reviews",
 }: ReviewListProps) {
-
     // Empty state
     if (reviews.length === 0) {
         return (
             <Card>
                 <CardContent className="py-12 text-center">
-                    <p className="text-muted-foreground">এখনো কোনো রিভিউ নেই</p>
+                    <p className="text-muted-foreground">No reviews yet</p>
                 </CardContent>
             </Card>
         );
@@ -58,17 +57,11 @@ export default function ReviewList({
                             {/* Average Rating */}
                             {averageRating && (
                                 <div className="flex items-center gap-2">
-                                    <span className="text-3xl font-bold">
-                                        {averageRating.toFixed(1)}
-                                    </span>
+                                    <span className="text-3xl font-bold">{averageRating.toFixed(1)}</span>
                                     <div>
-                                        <StarRating
-                                            rating={Math.round(averageRating)}
-                                            readonly
-                                            size={20}
-                                        />
+                                        <StarRating rating={Math.round(averageRating)} readonly size={20} />
                                         <p className="text-xs text-muted-foreground mt-1">
-                                            {reviewCount || reviews.length} টি রিভিউ
+                                            {reviewCount || reviews.length} reviews
                                         </p>
                                     </div>
                                 </div>
@@ -81,11 +74,7 @@ export default function ReviewList({
             {/* Reviews List */}
             <div className="space-y-4">
                 {reviews.map((review) => (
-                    <ReviewCard
-                        key={review.id}
-                        review={review}
-                        showMedicine={showMedicine}
-                    />
+                    <ReviewCard key={review.id} review={review} showMedicine={showMedicine} />
                 ))}
             </div>
         </div>

@@ -13,31 +13,33 @@ export default async function CheckoutPage() {
 
     // If cart is empty, redirect to cart page
     if (items.length === 0) {
-        redirect("/cart");
+        redirect("/orders");
     }
 
     return (
         <main className="max-w-7xl mx-auto p-6">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold mb-2">চেকআউট</h1>
+                <h1 className="text-3xl font-bold mb-2">Checkout</h1>
                 <p className="text-muted-foreground">
-                    আপনার অর্ডার নিশ্চিত করতে নিচের তথ্য পূরণ করুন
+                    Fill in the details below to confirm your order
                 </p>
+            </div>
+
+            {/* Back to Cart Link */}
+            <div className="mb-3 text-left">
+                <Link
+                    href="/cart"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                    ← Back to cart
+                </Link>
             </div>
 
             {/* Checkout Form */}
             <CheckoutForm subtotal={subtotal} itemCount={cartCount} />
 
-            {/* Back to Cart Link */}
-            <div className="mt-6 text-center">
-                <Link
-                    href="/cart"
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                    ← কার্টে ফিরে যান
-                </Link>
-            </div>
+
         </main>
     );
 }

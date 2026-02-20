@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { CreateOrderPayload, OrderApiResponse, OrdersListApiResponse } from "@/types/order.type";
+import { CreateOrderPayload, OrderApiResponse, OrdersListApiResponse, StatusHistoryApiResponse } from "@/types/order.type";
 import { cookies } from "next/headers";
 
 const API_URL = env.API_URL;
@@ -192,9 +192,53 @@ const cancelOrder = async (orderId: string): Promise<OrderApiResponse> => {
     }
 };
 
+
+const getOrderStatusHistory = async (orderId: string): Promise<StatusHistoryApiResponse> => {
+    const cookieStore = await cookies();
+
+    try {
+        const res = await fetch(`${API_URL}/orders/${orderId}/status-history`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Cookie: cookieStore.toString(),
+            },
+            credentials: "include",
+            cache: "no-store", // Always get fresh data
+        });
+
+        const body = await res.json().catch(() => null);
+
+        if (!res.ok) {
+            return {
+                ok: false,
+                status: res.status,
+                data: null,
+                error: { message: body?.message ?? "Status history আনা যায়নি" },
+            };
+        }
+
+        return {
+            ok: true,
+            status: res.status,
+            data: body ?? null,
+            error: null,
+        };
+    } catch (err) {
+        console.error("order.service.getOrderStatusHistory error:", err);
+        return {
+            ok: false,
+            status: 0,
+            data: null,
+            error: { message: "Network error" }
+        };
+    }
+};
+
 export const orderService = {
     createOrder,
     getOrders,
     getOrder,
     cancelOrder,
+    getOrderStatusHistory
 };

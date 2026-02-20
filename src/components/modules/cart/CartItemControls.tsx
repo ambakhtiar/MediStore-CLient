@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { CartItemType } from "@/types/cart.type";
 import { removeCartItem, updateCartItem } from "@/action/cart.action";
+import { XCircle } from "lucide-react";
+
 
 export default function CartItemControls({ item }: { item: CartItemType }) {
     const router = useRouter();
@@ -114,7 +116,8 @@ export default function CartItemControls({ item }: { item: CartItemType }) {
                 disabled={loading}
                 className="text-red-600 px-2 py-1 rounded border disabled:opacity-50"
             >
-                DELETE
+                <XCircle className="w-4 h-4" />
+                <span className="sr-only">Remove</span>
             </button>
         </div>
     );

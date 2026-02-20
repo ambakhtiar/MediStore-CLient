@@ -4,6 +4,10 @@ export const customerNavbarRoutes: NavbarRoutesTypes[] = [
     {
         title: "Orders",
         url: "/orders"
+    },
+    {
+        title: "Reviews",
+        url: "/reviews"
     }
 ];
 
